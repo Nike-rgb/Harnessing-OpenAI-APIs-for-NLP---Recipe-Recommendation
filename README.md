@@ -6,4 +6,4 @@ But what if I told you that those days are gone? Yes, you read that right. Say f
 
 In my quest to showcase the remarkable capabilities of OpenAI APIs, I embarked on an exciting project — building a cutting-edge recipe recommendation web application. The vision was clear: create a system that could seamlessly take a user’s list of ingredients and provide personalized recipe suggestions that incorporate those ingredients flawlessly..."
 
-Full story on [Medium]("https://medium.com/@nikeshlepcha7/say-goodbye-to-model-training-recipe-recommendation-with-openai-9a8d1728e317")
+Full story on [Medium](https://medium.com/@nikeshlepcha7/say-goodbye-to-model-training-recipe-recommendation-with-openai-9a8d1728e317)
