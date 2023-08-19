@@ -7,12 +7,17 @@ const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
   const query = req.body;
+  if (query.length === 0) {
+    res.status(404).send("Error");
+    return;
+  }
+  if (query.length > 100) return res.status(404).send("Error");
   const completion = await openai.createChatCompletion({
     model: process.env.MODEL_NAME,
     messages: [
       {
         role: "system",
-        content: `Recipe including: ${query}. Less than 150 words. Return html with proper tags for ingredients and instructions `,
+        content: `Recipe including ingredients: ${query}. Should be json. When doing JSON.parse() on content, it should work. Json structure should be {title: [STRING], courseType: [STRING], calorieCount: [number], difficulty: [string among beginner, intermediate and expert], time: [string],ingredients: [ARRAY], instructions: [ARRAY]}. Each element in instruction should be at least 3 sentences.`,
       },
     ],
   });

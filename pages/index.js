@@ -1,149 +1,328 @@
+/* eslint-disable @next/next/no-page-custom-font */
 import Head from "next/head";
-import { styled } from "@mui/system";
-import { Paper } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { IconButton } from "@mui/material";
-import { useRef, useState } from "react";
-import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import Image from "next/image";
+import { animated, useSpring } from "@react-spring/web";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import LinearProgress from "@mui/material/LinearProgress";
+import { Paper } from "@mui/material";
+import styled from "@emotion/styled";
+import Rating from "@mui/material/Rating";
 
-const Container = styled(Paper)({
-  width: "60vw",
-  height: "50vh",
-  position: "absolute",
-  left: "50%",
-  top: "50%",
-  transform: "translate(-50%, -50%)",
-  background: "#dce6d8d1",
-  display: "grid",
-  gridTemplateColumns: "1fr 3fr",
-  alignItems: "center",
-  justifyItems: "center",
-  gap: "15px",
-  overflow: "auto",
-  boxShadow: "1px 5px 50px 2px white",
-});
+const dishNames = [
+  "Spaghetti Carbonara",
+  "Chicken Parmesan",
+  "Sushi Rolls",
+  "Pad Thai",
+  "Beef Stroganoff",
+  "Caesar Salad",
+  "Pizza Margherita",
+  "Chicken Alfredo",
+  "Miso Mushroom Soup",
+  "Fish and Chips",
+  "Chocolate Fondue",
+  "Steak Sauce Katti Rolls",
+  "Cesar Salad",
+  "Pasta Primavera",
+  "Chicken Curry",
+  "Sushi Sashimi Platter",
+  "Burger with Fries",
+];
 
-const LoadingIcon = styled(HourglassBottomIcon)({
-  fontSize: 50,
-  color: "darkorange",
-  animation: "spin 5s ease infinite",
-});
+const CommentContainer = styled(Paper)({});
 
-const Input = (props) => {
-  const inputRef = useRef();
-  const submit = async () => {
-    props.setFetching(true);
-    const query = inputRef.current.value;
-    console.log(query);
-    const res = await fetch("/api/create_recipe", {
-      method: "POST",
-      body: query,
-    });
-    const results = await res.text();
-    props.setFetching(false);
-    props.setRecipe(results);
+const Loading = () => {
+  const loadings = [
+    "Preparing your dish",
+    "Nice choice of ingredients there!",
+    "Something is smelling real good.",
+    "It's taking longer than usual. Are you sure you are connected to the internet?",
+  ];
+
+  const animationConfig = {
+    duration: 3000,
   };
 
+  const springs1 = useSpring({
+    from: { x: 0, opacity: 0 },
+    to: { x: 100, opacity: 1 },
+    config: { duration: 1500 },
+  });
+
+  const springs2 = useSpring({
+    from: { x: -500, y: 200, opacity: 0 },
+    to: { x: -300, y: 200, opacity: 1 },
+    config: { duration: 2000 },
+  });
+
+  const springs3 = useSpring({
+    from: { x: 200, y: 100, opacity: 0 },
+    to: { x: 100, y: 200, opacity: 1 },
+    config: { duration: 2000 },
+  });
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % loadings.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
-    <>
-      <div className="search_container">
-        <form method="post">
-          <input
-            className="search"
-            ref={inputRef}
-            placeholder="Put in ingredients to get tasty recipes!"
-            name="prompt"
-          />
-          <IconButton onClick={submit} aria-label="search" size="large">
-            <SearchIcon fontSize="inherit" />
-          </IconButton>
-        </form>
+    <div className="absolute grid justify-items-center gap-6 w-[60%] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+      <animated.div style={{ ...springs1 }}>
+        <CommentContainer
+          elevation={15}
+          style={{ animation: "" }}
+          className={`absolute grid items-center rounded-lg p-2 px-3 w-56 grid grid-cols-3`}
+        >
+          <Image src={"food2.svg"} width={48} height={48} alt="food image" />
+          <div className="col-span-2 grid gap-1">
+            <span className="text-xs">I made this!</span>
+            <Rating
+              name="read-only"
+              value={4.5}
+              size="small"
+              precision={0.5}
+              readOnly
+            />
+          </div>
+        </CommentContainer>
+      </animated.div>
+
+      <animated.div style={{ ...springs2 }}>
+        <CommentContainer
+          elevation={15}
+          style={{ animation: "" }}
+          className={`absolute grid items-center rounded-lg p-1 px-3 w-56 grid grid-cols-3`}
+        >
+          <Image src={"food1.svg"} width={48} height={48} alt="food image" />
+          <div className="col-span-2 grid gap-1">
+            <span className="text-xs">
+              Surprised my bf with this. He loved it!
+            </span>
+            <Rating
+              name="read-only"
+              value={4}
+              size="small"
+              precision={0.5}
+              readOnly
+            />
+          </div>
+        </CommentContainer>
+      </animated.div>
+
+      <animated.div style={{ ...springs3 }}>
+        <CommentContainer
+          elevation={15}
+          style={{ animation: "" }}
+          className={`absolute grid items-center rounded-lg p-1 px-3 w-56 grid grid-cols-3`}
+        >
+          <Image src={"dessert.svg"} width={48} height={48} alt="food image" />
+          <div className="col-span-2 grid gap-1">
+            <span className="text-xs">
+              I never knew I could make my own ice-cream
+            </span>
+            <Rating
+              name="read-only"
+              value={5}
+              size="small"
+              precision={0.5}
+              readOnly
+            />
+          </div>
+        </CommentContainer>
+      </animated.div>
+
+      <Image
+        src={"/chef.png"}
+        width={300}
+        height={300}
+        alt={"Preparing your recipe"}
+      />
+      <div
+        className="mt-16"
+        style={{ fontFamily: "Playfair Display SC", color: "grey" }}
+      >
+        {loadings[currentIndex]}
       </div>
-    </>
+      <LinearProgress
+        style={{
+          width: "40%",
+          background: "radial-gradient(#591689, transparent)",
+        }}
+        color="success"
+      />
+    </div>
   );
 };
 
 export default function Home() {
-  const [recipe, setRecipe] = useState("");
+  const router = useRouter();
+  const [currentDishIndex, setCurrentDishIndex] = useState(0);
   const [fetching, setFetching] = useState(false);
+  const [springs, api] = useSpring(() => ({
+    from: { y: -50 },
+    to: { y: 0 },
+  }));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDishIndex((prevIndex) => (prevIndex + 1) % dishNames.length);
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    api.start({
+      from: { y: -30 },
+      to: { y: 0 },
+    });
+  }, [currentDishIndex]);
+
+  const search = async (e) => {
+    e.preventDefault();
+    setFetching(true);
+    const form = document.querySelector("#search_form");
+    const formData = new FormData(form);
+    let query;
+    for (let [key, value] of formData) {
+      if (key === "query") {
+        query = value;
+      }
+    }
+    router.push({
+      pathname: "/create",
+      query: { query },
+    });
+  };
   return (
     <>
       <Head>
-        <title>Recipe Recommendation</title>
+        <title>RecipeMaker | Home</title>
         <meta
           name="description"
-          content="Put in ingredients as prompt to get recipe recommendation. It's gonna be tasty!"
+          content="Get recipe recommendation from you
+          r ingredients"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Edu+SA+Beginner&display=swap"
-          rel="stylesheet"
-        ></link>
       </Head>
-      <video autoPlay={true} muted={true} loop={true} className="bg_vid">
-        <source src="bg_vid.mp4" type="video/mp4" />
-      </video>
-      {recipe && !fetching && (
-        <div className="recipe">
-          <div
-            className="result_container"
-            dangerouslySetInnerHTML={{ __html: recipe }}
-          ></div>
+      {fetching && <Loading />}
+      {!fetching && (
+        <>
+          <div className="p-20 grid gap-4 items-center grid-cols-7">
+            <div className="col-span-3 grid gap-16 items-center justify-items-center">
+              <div
+                className="text-4xl tracking-wide leading-normal"
+                style={{
+                  fontFamily: "Playfair Display SC",
+                  color: "#488817",
+                }}
+              >
+                It&apos;s not just Food<br></br>It&apos;s an Experience!
+              </div>
+              <form
+                method="POST"
+                className="w-[75%]"
+                id="search_form"
+                name="form"
+                onSubmit={search}
+              >
+                <div
+                  className="flex p-1 items-center gap-2 rounded-xl bg-white"
+                  style={{
+                    boxShadow:
+                      "11px 8px 11px 0px rgba(0, 0, 0, 0.11) inset, -4px -4px 10px 0px #FFF inset",
+                  }}
+                >
+                  <input
+                    className="bg-transparent outline-none flex-[0.85] p-2 text-center text-lg"
+                    placeholder="Try flour, egg, milk, cheese"
+                    name="query"
+                  />
+                  <span className="text-center flex-[0.15]">
+                    <i className="text-2xl text-orange-400 fa-solid fa-magnifying-glass"></i>
+                  </span>
+                </div>
+              </form>
+              <div className="grid gap-4 grid-cols-4 items-center">
+                <Image
+                  alt="food image"
+                  className=""
+                  src={"/food1.svg"}
+                  width={86}
+                  height={86}
+                />
+                <Image
+                  alt="food image"
+                  className=""
+                  src={"/food2.svg"}
+                  width={86}
+                  height={86}
+                />
+                <Image
+                  className=""
+                  src={"/dessert.svg"}
+                  alt="food image"
+                  width={70}
+                  height={70}
+                />
+                <Image
+                  alt="food image"
+                  className=""
+                  src={"/food3.svg"}
+                  width={86}
+                  height={86}
+                />
+              </div>
+              <div
+                className="text-xl"
+                style={{
+                  fontFamily: "serif, arial",
+                  color: "rgb(72, 136, 23)",
+                }}
+              >
+                Only Good Food and Happy Moods!
+              </div>
+            </div>
+            <Image
+              className="col-span-4"
+              src={"/landing.svg"}
+              alt="Food picture"
+              width={700}
+              height={100}
+              priority={true}
+            />
+          </div>
           <Image
-            src="/chef3.png"
-            alt="chef image"
-            width={350}
-            height={350}
-            style={{ right: "5%", bottom: "5%" }}
-            className="chef_img1"
+            src="/grains.svg"
+            alt="leaf picture"
+            width={200}
+            height={200}
+            className="absolute top-24 right-24"
           />
-        </div>
-      )}
-      {!recipe && (
-        <Container
-          style={{ display: recipe && !fetching ? "block" : "grid" }}
-          elevation={20}
-        >
-          {!fetching && recipe === "" && (
-            <div>
-              <Image src={"/chef1.png"} width={190} height={300} alt={"chef"} />
-            </div>
-          )}
-          {recipe === "" && fetching === false ? (
-            <Input setFetching={setFetching} setRecipe={setRecipe} />
-          ) : (
-            <div
-              className="result_container"
-              dangerouslySetInnerHTML={{ __html: recipe }}
-            ></div>
-          )}
-          {fetching === true && (
-            <div
-              style={{
-                textAlign: "center",
-                position: "absolute",
-                top: "38%",
-                left: "38%",
-              }}
+
+          <div
+            className="grid gap-4 grid-cols-2 text-3xl tracking-widest p-3"
+            style={{ fontFamily: "Playfair Display SC" }}
+          >
+            <span className="justify-self-end">Make </span>
+            <animated.div
+              style={{ ...springs }}
+              className="text-orange-400 justify-self-start"
             >
-              <div style={{ padding: 20, fontSize: 18 }}>Cooking up a dish</div>
-              <LoadingIcon />
-            </div>
-          )}
-        </Container>
-      )}
-      {fetching && (
-        <Image
-          src="/chef4.png"
-          alt="chef image"
-          width={300}
-          height={350}
-          className="chef_img2"
-        />
+              {dishNames[currentDishIndex]}
+            </animated.div>
+          </div>
+        </>
       )}
     </>
   );
